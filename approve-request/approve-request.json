@@ -1,0 +1,41 @@
+{
+  "$schema": "https://unpkg.com/@camunda/element-templates-json-schema/resources/schema.json",
+  "name": "Approve request",
+  "id": "com.example.catalog.approve-request",
+  "description": "Route a request to a reviewer for approval.",
+  "version": 1,
+  "appliesTo": ["bpmn:UserTask"],
+  "elementType": {
+    "value": "bpmn:UserTask"
+  },
+  "icon": {
+    "contents": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%3E%3Cpath%20fill%3D%22%23505562%22%20d%3D%22M4%209l3%203l7-7%22%20stroke%3D%22%23505562%22%20fill%3D%22none%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E"
+  },
+  "properties": [
+    {
+      "label": "Reviewer",
+      "type": "String",
+      "binding": {
+        "type": "zeebe:assignmentDefinition",
+        "property": "assignee"
+      },
+      "constraints": {
+        "notEmpty": true
+      }
+    },
+    {
+      "label": "Priority",
+      "type": "Dropdown",
+      "value": "normal",
+      "choices": [
+        { "name": "Low", "value": "low" },
+        { "name": "Normal", "value": "normal" },
+        { "name": "High", "value": "high" }
+      ],
+      "binding": {
+        "type": "zeebe:taskHeader",
+        "key": "priority"
+      }
+    }
+  ]
+}

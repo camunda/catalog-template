@@ -1,0 +1,25 @@
+name: Sync Catalog
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  sync-catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Sync assets to the Camunda Hub Catalog
+        env:
+          # Client credentials — store these as repository secrets.
+          CAMUNDA_HUB_CLIENT_ID: ${{ secrets.CAMUNDA_HUB_CLIENT_ID }}
+          CAMUNDA_HUB_CLIENT_SECRET: ${{ secrets.CAMUNDA_HUB_CLIENT_SECRET }}
+          # SaaS values. For Self-Managed, replace these with your installation's
+          # values and remove CAMUNDA_HUB_OAUTH_AUDIENCE (see README.md).
+          CAMUNDA_OAUTH_URL: https://login.cloud.camunda.io/oauth/token
+          CAMUNDA_HUB_OAUTH_AUDIENCE: api.cloud.camunda.io
+          CAMUNDA_HUB_REST_URL: https://hub.cloud.camunda.io
+        run: bash scripts/sync-catalog.sh
