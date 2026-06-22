@@ -4,7 +4,7 @@
   "id": "com.example.catalog.approve-request",
   "description": "Route a request to a reviewer for approval.",
   "version": 1,
-  "appliesTo": ["bpmn:UserTask"],
+  "appliesTo": ["bpmn:Task"],
   "elementType": {
     "value": "bpmn:UserTask"
   },
@@ -12,6 +12,13 @@
     "contents": "data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2218%22%20height%3D%2218%22%20viewBox%3D%220%200%2018%2018%22%3E%3Cpath%20fill%3D%22%23505562%22%20d%3D%22M4%209l3%203l7-7%22%20stroke%3D%22%23505562%22%20fill%3D%22none%22%20stroke-width%3D%222%22%2F%3E%3C%2Fsvg%3E"
   },
   "properties": [
+    {
+      "type": "Hidden",
+      "value": "",
+      "binding": {
+        "type": "zeebe:userTask"
+      }
+    },
     {
       "label": "Reviewer",
       "type": "String",

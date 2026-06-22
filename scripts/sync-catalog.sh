@@ -12,13 +12,13 @@ set -euo pipefail
 # the Catalog but is absent from this submission is unpublished.
 #
 # Required environment variables:
-#   CAMUNDA_HUB_CLIENT_ID         OAuth client ID
-#   CAMUNDA_HUB_CLIENT_SECRET     OAuth client secret
+#   CAMUNDA_CONSOLE_CLIENT_ID         OAuth client ID
+#   CAMUNDA_CONSOLE_CLIENT_SECRET     OAuth client secret
 #   CAMUNDA_OAUTH_URL             Token issuer URL
-#   CAMUNDA_HUB_REST_URL          Camunda Hub API base URL (without /api/v2)
+#   CAMUNDA_HUB_BASE_URL          Camunda Hub API base URL (without /api/v2)
 #
 # SaaS only:
-#   CAMUNDA_HUB_OAUTH_AUDIENCE    Token audience (omit in Self-Managed)
+#   CAMUNDA_CONSOLE_OAUTH_AUDIENCE    Token audience (omit in Self-Managed)
 #
 # See README.md for the values to use in SaaS and Self-Managed.
 # ──────────────────────────────────────────────────────────────────────────────
@@ -31,16 +31,16 @@ echo "Requesting access token..."
 
 # The audience parameter is only used in SaaS; omit it in Self-Managed.
 AUDIENCE_ARG=()
-if [[ -n "${CAMUNDA_HUB_OAUTH_AUDIENCE:-}" ]]; then
-  AUDIENCE_ARG=(--data-urlencode "audience=${CAMUNDA_HUB_OAUTH_AUDIENCE}")
+if [[ -n "${CAMUNDA_CONSOLE_OAUTH_AUDIENCE:-}" ]]; then
+  AUDIENCE_ARG=(--data-urlencode "audience=${CAMUNDA_CONSOLE_OAUTH_AUDIENCE}")
 fi
 
 ACCESS_TOKEN=$(curl --silent --fail --request POST "${CAMUNDA_OAUTH_URL}" \
   --header 'Content-Type: application/x-www-form-urlencoded' \
   --data-urlencode 'grant_type=client_credentials' \
   "${AUDIENCE_ARG[@]}" \
-  --data-urlencode "client_id=${CAMUNDA_HUB_CLIENT_ID}" \
-  --data-urlencode "client_secret=${CAMUNDA_HUB_CLIENT_SECRET}" | jq -r '.access_token')
+  --data-urlencode "client_id=${CAMUNDA_CONSOLE_CLIENT_ID}" \
+  --data-urlencode "client_secret=${CAMUNDA_CONSOLE_CLIENT_SECRET}" | jq -r '.access_token')
 
 if [[ -z "${ACCESS_TOKEN}" || "${ACCESS_TOKEN}" == "null" ]]; then
   echo "Error: failed to obtain an access token." >&2
@@ -99,7 +99,7 @@ echo "Submitting ${ASSET_COUNT} asset(s) to the Catalog..."
 # --- Submit the full desired state --------------------------------------------
 
 HTTP_STATUS=$(curl --silent --output /dev/null --write-out '%{http_code}' --request PUT \
-  "${CAMUNDA_HUB_REST_URL}/api/v2/catalog/assets/ingestion" \
+  "${CAMUNDA_HUB_BASE_URL}/api/v2/catalog/assets/ingestion" \
   --header "Authorization: Bearer ${ACCESS_TOKEN}" \
   "${FORM_ARGS[@]}")
 

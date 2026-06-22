@@ -60,21 +60,21 @@ Create credentials with the **Camunda Hub API** permissions `create` and `update
 
 In **Settings > Secrets and variables > Actions**, add:
 
-| Secret                      | Description                          |
-| --------------------------- | ------------------------------------ |
-| `CAMUNDA_HUB_CLIENT_ID`     | OAuth client ID from step 1.         |
-| `CAMUNDA_HUB_CLIENT_SECRET` | OAuth client secret from step 1.     |
+| Secret                          | Description                      |
+| ------------------------------- | -------------------------------- |
+| `CAMUNDA_CONSOLE_CLIENT_ID`     | OAuth client ID from step 1.     |
+| `CAMUNDA_CONSOLE_CLIENT_SECRET` | OAuth client secret from step 1. |
 
 ### 3. Configure the environment URLs
 
 The workflow defaults to **SaaS**. For Self-Managed, edit the `env` block in
 [`.github/workflows/sync-catalog.yml`](.github/workflows/sync-catalog.yml):
 
-| Variable                     | SaaS                                        | Self-Managed                                                                          |
-| ---------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------- |
-| `CAMUNDA_OAUTH_URL`          | `https://login.cloud.camunda.io/oauth/token` | `<your-identity>/protocol/openid-connect/token`                                       |
-| `CAMUNDA_HUB_OAUTH_AUDIENCE` | `api.cloud.camunda.io`                      | _(remove — Self-Managed has no audience)_                                             |
-| `CAMUNDA_HUB_REST_URL`       | `https://hub.cloud.camunda.io`              | your Hub API base URL (default `http://localhost:8088`)                               |
+| Variable                         | SaaS                                         | Self-Managed                                            |
+| -------------------------------- | -------------------------------------------- | ------------------------------------------------------- |
+| `CAMUNDA_OAUTH_URL`              | `https://login.cloud.camunda.io/oauth/token` | `<your-identity>/protocol/openid-connect/token`         |
+| `CAMUNDA_CONSOLE_OAUTH_AUDIENCE` | `api.cloud.camunda.io`                       | _(remove — Self-Managed has no audience)_               |
+| `CAMUNDA_HUB_BASE_URL`           | `https://hub.cloud.camunda.io`               | your Hub API base URL (default `http://localhost:8088`) |
 
 ### 4. Push
 
@@ -87,11 +87,11 @@ job if the Catalog API rejects the submission.
 You can run the sync from your machine with the same environment variables:
 
 ```bash
-export CAMUNDA_HUB_CLIENT_ID="<client-id>"
-export CAMUNDA_HUB_CLIENT_SECRET="<client-secret>"
+export CAMUNDA_CONSOLE_CLIENT_ID="<client-id>"
+export CAMUNDA_CONSOLE_CLIENT_SECRET="<client-secret>"
 export CAMUNDA_OAUTH_URL="https://login.cloud.camunda.io/oauth/token"
-export CAMUNDA_HUB_OAUTH_AUDIENCE="api.cloud.camunda.io"
-export CAMUNDA_HUB_REST_URL="https://hub.cloud.camunda.io"
+export CAMUNDA_CONSOLE_OAUTH_AUDIENCE="api.cloud.camunda.io"
+export CAMUNDA_HUB_BASE_URL="https://hub.cloud.camunda.io"
 
 bash scripts/sync-catalog.sh
 ```
