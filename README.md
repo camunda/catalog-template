@@ -25,9 +25,11 @@ Each asset lives in its own directory containing exactly two files:
 │   ├── README.md
 │   └── approve-request.json
 ├── scripts/
-│   └── sync-catalog.sh        # discovers assets and calls the Catalog API
+│   ├── sync-catalog.sh        # discovers assets and calls the Catalog API
+│   └── check-versions.sh      # fails a PR when a changed template is not re-versioned
 └── .github/workflows/
-    └── sync-catalog.yml        # runs the sync on every push to main
+    ├── sync-catalog.yml        # runs the sync on every push to main
+    └── check-versions.yml      # runs the version check on every pull request
 ```
 
 - **`README.md`** — YAML frontmatter plus a Markdown description. The frontmatter
@@ -104,3 +106,19 @@ When you change a template's content, increment its `version` field. The Catalog
 rejects a changed template whose `version` is not greater than the latest stored
 version. If the content is unchanged, the version may stay the same and no new
 version is created.
+
+To catch a missing bump before it reaches the Catalog, the
+[`check-versions.yml`](.github/workflows/check-versions.yml) workflow runs on
+every pull request. For each changed template, it compares the content (excluding
+`version`) against the base branch and fails the check when the content changed
+but the `version` did not increase. README-only changes do not require a bump.
+
+Run the same check locally against your default branch:
+
+```bash
+bash scripts/check-versions.sh origin/main
+```
+
+For the rare case where you intentionally change content without bumping the
+version, add the `skip-version-check` label to the pull request to bypass the
+check.

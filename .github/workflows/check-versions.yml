@@ -1,0 +1,25 @@
+name: Check catalog asset versions
+
+# Fail a pull request when an element template's content changed without its
+# `version` field increasing, so the change is caught before it is synced to the
+# Camunda Hub Catalog.
+#
+# Add the `skip-version-check` label to a pull request to bypass this check for
+# the rare case where you intentionally change content without a version bump.
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  check-versions:
+    runs-on: ubuntu-latest
+    if: ${{ !contains(github.event.pull_request.labels.*.name, 'skip-version-check') }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check that changed templates increment their version
+        run: bash scripts/check-versions.sh "origin/${{ github.base_ref }}"
