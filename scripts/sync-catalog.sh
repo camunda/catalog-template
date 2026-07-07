@@ -25,6 +25,31 @@ set -euo pipefail
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
+# --- Validate required environment variables ----------------------------------
+
+REQUIRED_VARS=(
+  CAMUNDA_CONSOLE_CLIENT_ID
+  CAMUNDA_CONSOLE_CLIENT_SECRET
+  CAMUNDA_OAUTH_URL
+  CAMUNDA_HUB_BASE_URL
+)
+
+MISSING_VARS=()
+for var in "${REQUIRED_VARS[@]}"; do
+  if [[ -z "${!var:-}" ]]; then
+    MISSING_VARS+=("${var}")
+  fi
+done
+
+if [[ "${#MISSING_VARS[@]}" -gt 0 ]]; then
+  echo "Error: the following required environment variables are not set:" >&2
+  for var in "${MISSING_VARS[@]}"; do
+    echo "  ${var}" >&2
+  done
+  echo "Store them as repository secrets and reference them in the workflow. See README.md for details." >&2
+  exit 1
+fi
+
 # --- Authenticate -------------------------------------------------------------
 
 echo "Requesting access token..."
