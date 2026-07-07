@@ -18,7 +18,8 @@ set -euo pipefail
 #   CAMUNDA_HUB_BASE_URL          Camunda Hub API base URL (without /api/v2)
 #
 # SaaS only:
-#   CAMUNDA_CONSOLE_OAUTH_AUDIENCE    Token audience (omit in Self-Managed)
+#   CAMUNDA_CONSOLE_OAUTH_AUDIENCE    Token audience (SaaS: api.cloud.camunda.io;
+#                                     Self-Managed: web-modeler-public-api)
 #
 # See README.md for the values to use in SaaS and Self-Managed.
 # ──────────────────────────────────────────────────────────────────────────────
@@ -54,7 +55,7 @@ fi
 
 echo "Requesting access token..."
 
-# The audience parameter is only used in SaaS; omit it in Self-Managed.
+# Both SaaS and Self-Managed require an audience; the value differs per environment.
 AUDIENCE_ARG=()
 if [[ -n "${CAMUNDA_CONSOLE_OAUTH_AUDIENCE:-}" ]]; then
   AUDIENCE_ARG=(--data-urlencode "audience=${CAMUNDA_CONSOLE_OAUTH_AUDIENCE}")
