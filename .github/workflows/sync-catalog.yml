@@ -18,7 +18,8 @@ jobs:
           CAMUNDA_CONSOLE_CLIENT_ID: ${{ secrets.CAMUNDA_CONSOLE_CLIENT_ID }}
           CAMUNDA_CONSOLE_CLIENT_SECRET: ${{ secrets.CAMUNDA_CONSOLE_CLIENT_SECRET }}
           # SaaS values. For Self-Managed, replace these with your installation's
-          # values and remove CAMUNDA_CONSOLE_OAUTH_AUDIENCE (see README.md).
+          # values and remove CAMUNDA_CONSOLE_OAUTH_AUDIENCE — Management Identity
+          # adds the web-modeler-public-api audience to the token (see README.md).
           CAMUNDA_OAUTH_URL: https://login.cloud.camunda.io/oauth/token
           CAMUNDA_CONSOLE_OAUTH_AUDIENCE: api.cloud.camunda.io
           CAMUNDA_HUB_BASE_URL: https://hub.cloud.camunda.io

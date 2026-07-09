@@ -73,7 +73,7 @@ The workflow defaults to **SaaS**. For Self-Managed, edit the `env` block in
 | Variable                         | SaaS                                         | Self-Managed                                            |
 | -------------------------------- | -------------------------------------------- | ------------------------------------------------------- |
 | `CAMUNDA_OAUTH_URL`              | `https://login.cloud.camunda.io/oauth/token` | `<your-identity>/protocol/openid-connect/token`         |
-| `CAMUNDA_CONSOLE_OAUTH_AUDIENCE` | `api.cloud.camunda.io`                       | _(remove — Self-Managed has no audience)_               |
+| `CAMUNDA_CONSOLE_OAUTH_AUDIENCE` | `api.cloud.camunda.io`                       | _(leave unset — Management Identity adds the `web-modeler-public-api` audience)_ |
 | `CAMUNDA_HUB_BASE_URL`           | `https://hub.cloud.camunda.io`               | your Hub API base URL (default `http://localhost:8088`) |
 
 ### 4. Push
