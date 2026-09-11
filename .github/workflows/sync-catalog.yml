@@ -22,5 +22,5 @@ jobs:
           # adds the web-modeler-public-api audience to the token (see README.md).
           CAMUNDA_OAUTH_URL: https://login.cloud.camunda.io/oauth/token
           CAMUNDA_CONSOLE_OAUTH_AUDIENCE: api.cloud.camunda.io
-          CAMUNDA_HUB_BASE_URL: https://hub.cloud.camunda.io
+          CAMUNDA_HUB_BASE_URL: https://hub.camunda.io
         run: bash scripts/sync-catalog.sh

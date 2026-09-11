@@ -14,27 +14,37 @@ set -euo pipefail
 # Required environment variables:
 #   CAMUNDA_CONSOLE_CLIENT_ID         OAuth client ID
 #   CAMUNDA_CONSOLE_CLIENT_SECRET     OAuth client secret
+#
+# Optional environment variables (default to the SaaS values below; override for
+# Self-Managed):
 #   CAMUNDA_OAUTH_URL             Token issuer URL
 #   CAMUNDA_HUB_BASE_URL          Camunda Hub API base URL (without /api/v2)
-#
-# SaaS only:
 #   CAMUNDA_CONSOLE_OAUTH_AUDIENCE    Token audience passed in the token request.
-#                                     In Self-Managed, leave this unset: Management
-#                                     Identity adds the web-modeler-public-api
-#                                     audience to the token itself.
+#                                     In Self-Managed, set this to an empty value:
+#                                     Management Identity adds the
+#                                     web-modeler-public-api audience to the token
+#                                     itself.
 #
 # See README.md for the values to use in SaaS and Self-Managed.
 # ──────────────────────────────────────────────────────────────────────────────
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
+# --- Defaults -----------------------------------------------------------------
+#
+# These default to the SaaS values so the script works out of the box with only
+# the client credentials set. For Self-Managed, override them with your
+# installation's values (see README.md).
+
+: "${CAMUNDA_OAUTH_URL:=https://login.cloud.camunda.io/oauth/token}"
+: "${CAMUNDA_HUB_BASE_URL:=https://hub.camunda.io}"
+: "${CAMUNDA_CONSOLE_OAUTH_AUDIENCE:=api.cloud.camunda.io}"
+
 # --- Validate required environment variables ----------------------------------
 
 REQUIRED_VARS=(
   CAMUNDA_CONSOLE_CLIENT_ID
   CAMUNDA_CONSOLE_CLIENT_SECRET
-  CAMUNDA_OAUTH_URL
-  CAMUNDA_HUB_BASE_URL
 )
 
 MISSING_VARS=()
@@ -49,7 +59,7 @@ if [[ "${#MISSING_VARS[@]}" -gt 0 ]]; then
   for var in "${MISSING_VARS[@]}"; do
     echo "  ${var}" >&2
   done
-  echo "Store them as repository secrets and reference them in the workflow. See README.md for details." >&2
+  echo "Export them in your shell when running locally, or store them as repository secrets and reference them in the workflow. See README.md for details." >&2
   exit 1
 fi
 

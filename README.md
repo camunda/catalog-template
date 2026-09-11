@@ -86,17 +86,19 @@ job if the Catalog API rejects the submission.
 
 ## Run locally
 
-You can run the sync from your machine with the same environment variables:
+You can run the sync from your machine. The script defaults to the **SaaS** URLs,
+so only the client credentials are required:
 
 ```bash
 export CAMUNDA_CONSOLE_CLIENT_ID="<client-id>"
 export CAMUNDA_CONSOLE_CLIENT_SECRET="<client-secret>"
-export CAMUNDA_OAUTH_URL="https://login.cloud.camunda.io/oauth/token"
-export CAMUNDA_CONSOLE_OAUTH_AUDIENCE="api.cloud.camunda.io"
-export CAMUNDA_HUB_BASE_URL="https://hub.cloud.camunda.io"
 
 bash scripts/sync-catalog.sh
 ```
+
+For Self-Managed, additionally set `CAMUNDA_OAUTH_URL` and `CAMUNDA_HUB_BASE_URL`
+to your installation's values and set `CAMUNDA_CONSOLE_OAUTH_AUDIENCE` to an empty
+value (see the table in [step 3](#3-configure-the-environment-urls)).
 
 Requires `bash`, `curl`, and `jq`.
 
