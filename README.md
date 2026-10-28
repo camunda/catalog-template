@@ -84,8 +84,7 @@ The workflow defaults to **SaaS**. For Self-Managed, edit the `env` block in
 | `CAMUNDA_HUB_BASE_URL`           | `https://hub.cloud.camunda.io`               | your Hub API base URL (default `http://localhost:8088`) |
 
 The workflow also sets `CAMUNDA_CATALOG_SOURCE` to the `owner/repo` name of the
-repository. You can change this value to group the assets of several
-repositories under one source. See [Multiple repositories](#multiple-repositories).
+repository. See [Multiple repositories](#multiple-repositories).
 
 ### 4. Push
 
