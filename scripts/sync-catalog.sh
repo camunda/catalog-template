@@ -9,7 +9,8 @@ set -euo pipefail
 # and submits the full desired state to the Hub Catalog ingestion endpoint.
 #
 # Because the submission is the complete desired state, any asset that exists in
-# the Catalog but is absent from this submission is unpublished.
+# the Catalog for this source but is absent from this submission is unpublished.
+# Assets of other sources stay untouched.
 #
 # Required environment variables:
 #   CAMUNDA_CONSOLE_CLIENT_ID         OAuth client ID
@@ -24,6 +25,10 @@ set -euo pipefail
 #                                     Management Identity adds the
 #                                     web-modeler-public-api audience to the token
 #                                     itself.
+#   CAMUNDA_CATALOG_SOURCE            Identifier that scopes the assets to this
+#                                     repository. Defaults to the "owner/repo"
+#                                     name of the origin remote. Set to an empty
+#                                     value to ingest without a source.
 #
 # See README.md for the values to use in SaaS and Self-Managed.
 # ──────────────────────────────────────────────────────────────────────────────
@@ -39,6 +44,17 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 : "${CAMUNDA_OAUTH_URL:=https://login.cloud.camunda.io/oauth/token}"
 : "${CAMUNDA_HUB_BASE_URL:=https://hub.camunda.io}"
 : "${CAMUNDA_CONSOLE_OAUTH_AUDIENCE:=api.cloud.camunda.io}"
+
+# Scope the assets to this repository. The source defaults to the "owner/repo"
+# name of the origin remote (for example, "camunda/catalog-template"), so local
+# runs and the GitHub Actions workflow use the same source. When no origin
+# remote is available, the assets are ingested without a source.
+if [[ -z "${CAMUNDA_CATALOG_SOURCE+x}" ]]; then
+  ORIGIN_URL="$(git -C "${REPO_ROOT}" remote get-url origin 2>/dev/null || true)"
+  if [[ -n "${ORIGIN_URL}" ]]; then
+    CAMUNDA_CATALOG_SOURCE="$(printf '%s' "${ORIGIN_URL%.git}" | sed -E 's#.*[:/]([^/]+/[^/]+)$#\1#')"
+  fi
+fi
 
 # --- Validate required environment variables ----------------------------------
 
@@ -133,13 +149,20 @@ if [[ "${ASSET_COUNT}" -eq 0 ]]; then
   exit 1
 fi
 
-echo "Submitting ${ASSET_COUNT} asset(s) to the Catalog..."
+SOURCE_ARGS=()
+if [[ -n "${CAMUNDA_CATALOG_SOURCE:-}" ]]; then
+  SOURCE_ARGS=(-F "source=${CAMUNDA_CATALOG_SOURCE}")
+  echo "Submitting ${ASSET_COUNT} asset(s) to the Catalog (source: ${CAMUNDA_CATALOG_SOURCE})..."
+else
+  echo "Submitting ${ASSET_COUNT} asset(s) to the Catalog (no source)..."
+fi
 
 # --- Submit the full desired state --------------------------------------------
 
 HTTP_STATUS=$(curl --silent --output /dev/null --write-out '%{http_code}' --request PUT \
   "${CAMUNDA_HUB_BASE_URL}/api/v2/catalog/assets/ingestion" \
   --header "Authorization: Bearer ${ACCESS_TOKEN}" \
+  "${SOURCE_ARGS[@]}" \
   "${FORM_ARGS[@]}")
 
 if [[ "${HTTP_STATUS}" == "204" ]]; then

@@ -5,9 +5,14 @@ This is a template repository for publishing reusable **element templates** to t
 
 A [GitHub Actions workflow](.github/workflows/sync-catalog.yml) submits the
 templates in this repository to the Hub Catalog whenever you push to `main`. The
-submission represents the **complete desired state** of the Catalog: assets in
-this repository are published or updated, and any asset that is no longer present
-is unpublished.
+submission represents the **complete desired state** of the Catalog for this
+repository: assets in this repository are published or updated, and any asset
+that is no longer present is unpublished.
+
+Each submission is scoped to a **source** (the `owner/repo` name of this
+repository). The Catalog unpublishes only the missing assets of this source.
+Assets that other repositories ingested with a different source stay untouched.
+See [Multiple repositories](#multiple-repositories).
 
 Use it as a starting point: clone or use it as a template, replace the example
 assets with your own, configure the required secrets, and push.
@@ -78,16 +83,36 @@ The workflow defaults to **SaaS**. For Self-Managed, edit the `env` block in
 | `CAMUNDA_CONSOLE_OAUTH_AUDIENCE` | `api.cloud.camunda.io`                       | _(leave unset — Management Identity adds the `web-modeler-public-api` audience)_ |
 | `CAMUNDA_HUB_BASE_URL`           | `https://hub.cloud.camunda.io`               | your Hub API base URL (default `http://localhost:8088`) |
 
+The workflow also sets `CAMUNDA_CATALOG_SOURCE` to the `owner/repo` name of the
+repository. See [Multiple repositories](#multiple-repositories).
+
 ### 4. Push
 
 Commit and push to `main`, or run the **Sync Catalog** workflow manually from the
 **Actions** tab. The script prints the number of assets submitted and fails the
 job if the Catalog API rejects the submission.
 
+## Multiple repositories
+
+The `source` attribute scopes each submission to the repository that sends it.
+The default is the `owner/repo` name of the repository. This lets you publish
+assets from more than one repository into the same Catalog:
+
+- A sync unpublishes only the missing assets of its own source. Assets of other
+  sources stay untouched.
+- An asset whose template `id` exists in another source moves to the ingested
+  source. This makes a source rename or a mono-repo split a safe hand-over: the
+  last successful sync wins.
+
+To change the scope, set `CAMUNDA_CATALOG_SOURCE` in the workflow `env` block
+or when you run the script locally. Set it to an empty value to ingest without
+a source.
+
 ## Run locally
 
-You can run the sync from your machine. The script defaults to the **SaaS** URLs,
-so only the client credentials are required:
+You can run the sync from your machine. The script defaults to the **SaaS** URLs
+and the `owner/repo` name of the `origin` remote, so only the client credentials
+are required:
 
 ```bash
 export CAMUNDA_CONSOLE_CLIENT_ID="<client-id>"
