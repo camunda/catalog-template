@@ -52,6 +52,7 @@ REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 if [[ -z "${CAMUNDA_CATALOG_SOURCE+x}" ]]; then
   ORIGIN_URL="$(git -C "${REPO_ROOT}" remote get-url origin 2>/dev/null || true)"
   if [[ -n "${ORIGIN_URL}" ]]; then
+    ORIGIN_URL="${ORIGIN_URL%/}"
     CAMUNDA_CATALOG_SOURCE="$(printf '%s' "${ORIGIN_URL%.git}" | sed -E 's#.*[:/]([^/]+/[^/]+)$#\1#')"
   fi
 fi
