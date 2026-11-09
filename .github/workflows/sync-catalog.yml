@@ -23,4 +23,8 @@ jobs:
           CAMUNDA_OAUTH_URL: https://login.cloud.camunda.io/oauth/token
           CAMUNDA_CONSOLE_OAUTH_AUDIENCE: api.cloud.camunda.io
           CAMUNDA_HUB_BASE_URL: https://hub.camunda.io
+          # Scope the assets to this repository. Only assets of this source are
+          # unpublished when missing from the submission; assets of other
+          # sources stay untouched (see README.md).
+          CAMUNDA_CATALOG_SOURCE: ${{ github.repository }}
         run: bash scripts/sync-catalog.sh
